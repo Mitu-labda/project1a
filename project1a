@@ -1,0 +1,149 @@
+import java.lang.classfile.instruction.NewMultiArrayInstruction;
+import java.util.List;
+import java.util.ArrayList;
+
+public class LinkedListDeque61B <T> implements Deque61B<T> {
+
+    public class Node {
+        public T item;
+        public Node next;
+        public Node pre;
+
+        public Node(T x, Node w, Node k) {
+            item = x;
+            next = w;
+            pre = k;
+        }
+    }
+
+    public LinkedListDeque61B(T x) {
+        setBack = new Node(null, null, setFront);
+        setFront = new Node(null, setBack, null);
+        setFront.next = new Node(x, setBack, setFront);
+
+
+        size = 1;
+    }
+
+
+    public LinkedListDeque61B() {
+        setFront = new Node(null, setBack, null);
+        setBack = new Node(null, null, setFront);
+        setFront.next = setBack;
+        setBack.pre = setFront;
+
+        size = 0;
+    }
+
+    private Node setFront;
+    private Node setBack;
+    private int size;
+
+
+    @Override
+    public void addFirst(T x) {
+        Node L = new Node(x, null, setFront);
+        setFront.next.pre = L;
+        setFront.next = L;
+
+        size += 1;
+
+    }
+
+    @Override
+    public void addLast(T x) {
+        Node L = new Node(x, setBack.pre, setBack);
+        setBack.pre.next = L;
+        setBack.pre = L;
+
+        size += 1;
+
+
+    }
+
+    @Override
+    public List<T> toList() {
+        List<T> returnList = new ArrayList<>();
+        Node P = new Node(null, null, null);
+        P = setFront.next;
+        while (P.next != setBack) {
+            returnList.add(P.item);
+            P = P.next;
+
+        }
+        return returnList;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        if (setFront.next == setBack || setBack.pre == setFront) {
+            size = 0;
+
+            return true;
+
+
+        }
+        return false;
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public T removeFirst() {
+        if (isEmpty()) {
+            return null;
+        }
+        T diuqi = setFront.next.item;
+        setFront.next = setFront.next.next;
+        setFront.next.pre = setFront;
+
+        size--;
+        return diuqi;
+    }
+
+    @Override
+    public T removeLast() {
+        if (isEmpty()) {
+            return null;
+        }
+        T diuqi = setBack.pre.item;
+        setBack.pre = setBack.pre.pre;
+        setBack.pre.next = setBack;
+
+        size--;
+        return diuqi;
+    }
+
+    @Override
+    public T get(int index) {
+        if (index > size || isEmpty() || index < 0) {
+            return null;
+        }
+        Node current = setFront.next;
+        for (int i = 1; i <= index; i++) {
+            current = current.next;
+
+        }
+        return current.item;
+    }
+
+
+    private T getRecursiveHelper(Node node, int index) {
+        if (index == 0) {
+            return node.item;
+        }
+        return getRecursiveHelper(node.next, index - 1);
+    }
+
+
+    @Override
+    public T getRecursive(int index) {
+        if (index >= size || index < 0) {
+            return null;
+        }
+        return getRecursiveHelper(setFront.next, index);
+    }
+}
