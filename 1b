@@ -1,0 +1,132 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.lang.Math;
+
+public class ArrayDeque61B <T> implements Deque61B<T>{
+
+    private int size;
+    private T[] items;
+
+
+    //create array circular
+    private int nextFrist; //指向最后一个
+    private int nextLast; //指向下一个位置
+
+
+
+    public ArrayDeque61B() {
+        items=(T[]) new Object[8];
+        size=0;
+        nextFrist=items.length;
+        nextLast=0;
+    }
+
+
+    public void resize(int capacity){
+        T[] temp=(T[]) new Object [capacity];
+        for(int j=0;j<size;j++){
+            temp[j]=get(j);
+        }
+        items=temp;
+        nextFrist=capacity-1;
+        nextLast=size;
+    }
+
+
+
+
+
+    @Override
+    public void addFirst(T x) {
+        if (items.length == size) {
+            resize(size*2);
+        }
+        items[nextFrist]=x;
+        nextFrist=Math.floorMod(nextFrist-1,items.length);
+        size+=1;
+    }
+
+    @Override
+    public void addLast(T x) {
+        if (size == items.length) {
+            resize(size*2);
+        }
+        items[nextLast]=x;
+        nextLast=Math.floorMod(nextLast+1,items.length);
+        size+=1;
+    }
+
+    @Override
+    public List<T> toList() {
+        List<T> returnList = new ArrayList<>();
+        for(int i=0;i<=size;i++){
+            returnList.add(get(i));
+        }
+
+        return returnList;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        if (size == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public T removeFirst() {
+        T diuqi=get(0);
+        items[Math.floorMod(nextFrist + 1, items.length)] = null;
+        nextFrist = Math.floorMod(nextFrist + 1, items.length);
+        size-=1;
+        return diuqi;
+    }
+
+    @Override
+    public T removeLast() {
+        T diuqi=items[Math.floorMod(nextLast - 1, items.length)];
+        items[Math.floorMod(nextLast - 1, items.length)]=null;
+        nextLast = Math.floorMod(nextLast - 1, items.length);
+        size-=1;
+
+        return diuqi;
+    }
+
+    @Override
+    public T get(int index) {
+        /**
+        if (nextFrist != items.length - 1){
+            // backNum: how many front-items that are at the back of the array
+            int backNum = items.length - nextFrist;
+            if (index < backNum){
+                return items[nextFrist + index];
+            } else {
+                return items[index - backNum];
+            }
+        } else {
+            return items[index];
+        }*/
+        return items[Math.floorMod(nextFrist + 1 + index, items.length)];
+    }
+
+    private T helperget(int index){
+        return items[Math.floorMod(nextFrist + 1 + index, items.length)];
+    }
+
+
+
+    @Override
+    public T getRecursive(int index) {
+        if (index >= size || index < 0) {
+            return null;
+        }
+        int i=0;
+        return helperget(index);
+    }
+}
